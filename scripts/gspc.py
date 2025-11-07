@@ -1,6 +1,8 @@
+# scripts/gspc.py
 import asyncio
 import sys
 import time
+import os
 from datetime import datetime, timezone
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -108,8 +110,12 @@ async def run_sp500_scraper():
 if __name__ == "__main__":
     df = asyncio.run(run_sp500_scraper())
     if df is not None and not df.empty:
-        out = "sp500_ytd_ohlcv.csv"
-        df.to_csv(out, index=False)
-        print(f"Saved to {out}")
+        # --- Save to data/raw folder (one level above scripts) ---
+        out_dir = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, "sp500_ytd_ohlcv.csv")
+
+        df.to_csv(out_path, index=False)
+        print(f"Saved to {out_path}")
     else:
         print("No data scraped.")
